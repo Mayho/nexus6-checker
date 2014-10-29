@@ -1,4 +1,6 @@
 var request = require('request');
+var colors = require('colors');
+
 var path = require('path');
 var exec = require('child_process').exec;
 
@@ -45,14 +47,14 @@ playAlert(); //Just to make sure alert works when launching
 function doCheck() {
 	Object.keys(playUrl).forEach(function(key){
 		var itemToCheck = playUrl[key];
-		
+
 		request(itemToCheck.url, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				if (body.indexOf(stockKeyword) > -1 || body.indexOf(notAvailableKeyword) > -1) {
-					console.log("Out of stock or unavailable: " + itemToCheck.name);
-				} else {
+					console.log("Out of stock or unavailable: ".red + itemToCheck.name.red);
+        } else {
 					playAlert();
-					console.log("In stock: " + itemToCheck.name + ", " + itemToCheck.url);
+					console.log("In stock: ".bold.green + itemToCheck.name.green + ", ".green + itemToCheck.url.underline.green);
 				}
 			}else{
 				console.log("Unknown error.  WTF MAN?!?");
