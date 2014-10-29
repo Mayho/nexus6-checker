@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/s0up/nexus6-checker",
   "dependencies": {
-      "request": "2.47.0"
+      "request": "2.47.0",
+      "colors": "1.0.3"
   }
 }
