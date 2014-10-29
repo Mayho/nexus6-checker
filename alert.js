@@ -2,11 +2,22 @@ var request = require('request');
 var path = require('path');
 var exec = require('child_process').exec;
 
+function help() {
+  console.log(process.argv[1] + ' [checkInterval]');
+  console.log('\tcheckInterval -- check interval in seconds (example: 5)');
+}
+
+if (process.argv.length == 3 && process.argv[2].indexOf('help') > -1) {
+  help();
+  return;
+}
+
 //Base configuration
 var appDir = path.dirname(require.main.filename);
 var stockKeyword = "We are out of inventory";
+var notAvailableKeyword = "is not available";
 var audioPlayBinary = "afplay";
-var checkInterval = 2000; //Check EVERY device every 2 seconds
+var checkInterval = process.argv[2] * 1000 || 2000; //Check EVERY device every 2 seconds
 
 var playUrl = [
 	{
@@ -37,11 +48,11 @@ function doCheck() {
 		
 		request(itemToCheck.url, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				if (body.indexOf(stockKeyword) > -1) {
-					console.log("Out of stock: " + itemToCheck.name);
+				if (body.indexOf(stockKeyword) > -1 || body.indexOf(notAvailableKeyword) > -1) {
+					console.log("Out of stock or unavailable: " + itemToCheck.name);
 				} else {
 					playAlert();
-					console.log("In stock: " + itemToCheck.name);
+					console.log("In stock: " + itemToCheck.name + ", " + itemToCheck.url);
 				}
 			}else{
 				console.log("Unknown error.  WTF MAN?!?");
